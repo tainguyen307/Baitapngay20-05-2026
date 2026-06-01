@@ -43,8 +43,9 @@ const UserPage = () => {
         <div style={{ padding: 30 }}>
             <Table
                 bordered
-                dataSource={dataSource} columns={columns}
-                rowKey={"_id"}
+                dataSource={Array.isArray(dataSource) ? dataSource : []}
+                columns={columns}
+                rowKey="_id"
             />
         </div>
     )

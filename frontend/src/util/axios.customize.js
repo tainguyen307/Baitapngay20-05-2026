@@ -1,14 +1,23 @@
 import axios from "axios";
 
 const instance = axios.create({
-    baseURL: import.meta.env.VITE_BACKEND_URL
+    baseURL: import.meta.env.VITE_BACKEND_URL,
+    headers: {
+    "Cache-Control": "no-cache",
+    "Pragma": "no-cache"
+    }
 });
 
-instance.interceptors.request.use(function (config) {
-    config.headers.Authorization = `Bearer ${localStorage.getItem("access_token")}`;
+instance.interceptors.request.use((config) => {
+    const token = localStorage.getItem("access_token");
+
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    } else {
+        delete config.headers.Authorization;
+    }
+
     return config;
-}, function (error) {
-    return Promise.reject(error);
 });
 
 instance.interceptors.response.use(function (response) {

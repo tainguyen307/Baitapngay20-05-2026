@@ -57,86 +57,213 @@ const OrderDetail =
             );
 
         return (
-            <div>
-                <h2>
-                    Order
-                    Detail
-                </h2>
+            <div className="bg-gray-100 min-h-screen py-10">
 
-                <p>
-                    ID:
-                    {
-                        order._id
-                    }
-                </p>
+                <div className="max-w-6xl mx-auto px-6">
 
-                <p>
-                    Total:
-                    $
-                    {
-                        order.totalPrice
-                    }
-                </p>
+                {/* HEADER */}
+                <div className="bg-white rounded-3xl p-8 mb-8">
 
-                <OrderStatusBadge
-                    status={
-                        order.status
-                    }
-                />
+                    <div className="flex flex-col lg:flex-row lg:justify-between gap-5">
 
-                <h3>
-                    Timeline
-                </h3>
+                    <div>
 
-                <OrderTimeline
-                    status={
-                        order.status
-                    }
-                />
+                        <p className="text-sm text-gray-400 mb-2">
+                        Mã đơn hàng
+                        </p>
 
-                <h3>
-                    Items
-                </h3>
+                        <h1 className="text-3xl font-bold">
+                        #{order._id.slice(-8)}
+                        </h1>
 
-                {order.items.map(
-                    (
-                        item
-                    ) => (
+                        <p className="text-gray-500 mt-3">
+                        {new Date(
+                            order.createdAt
+                        ).toLocaleString("vi-VN")}
+                        </p>
+
+                    </div>
+
+                    <div>
+
+                        <OrderStatusBadge
+                        status={order.status}
+                        />
+
+                    </div>
+
+                    </div>
+
+                </div>
+
+                {/* TIMELINE */}
+                <div className="bg-white rounded-3xl p-8 mb-8">
+
+                    <h2 className="text-2xl font-bold mb-6">
+                    Trạng thái đơn hàng
+                    </h2>
+
+                    <OrderTimeline
+                    status={order.status}
+                    />
+
+                </div>
+
+                {/* PRODUCTS */}
+                <div className="bg-white rounded-3xl p-8 mb-8">
+
+                    <h2 className="text-2xl font-bold mb-6">
+                    Sản phẩm đã đặt
+                    </h2>
+
+                    <div className="space-y-5">
+
+                    {order.items.map((item) => (
+
                         <div
-                            key={
-                                item.product
-                            }
+                        key={item.product}
+                        className="
+                            flex
+                            justify-between
+                            items-center
+                            border-b
+                            pb-5
+                        "
                         >
-                            {
-                                item.name
-                            }
-                            {" - "}
-                            {
-                                item.quantity
-                            }
-                            x $
-                            {
-                                item.price
-                            }
-                        </div>
-                    )
-                )}
 
-                {(order.status ===
-                    "NEW" ||
-                    order.status ===
-                        "PREPARING") && (
+                        <div>
+
+                            <h3 className="font-semibold text-lg">
+                            {item.name}
+                            </h3>
+
+                            <p className="text-gray-500">
+                            Số lượng: {item.quantity}
+                            </p>
+
+                        </div>
+
+                        <div className="text-right">
+
+                            <p className="font-bold text-red-500">
+                            {item.price?.toLocaleString()}đ
+                            </p>
+
+                        </div>
+
+                        </div>
+
+                    ))}
+
+                    </div>
+
+                </div>
+
+                {/* SHIPPING */}
+                <div className="bg-white rounded-3xl p-8 mb-8">
+
+                    <h2 className="text-2xl font-bold mb-6">
+                    Địa chỉ giao hàng
+                    </h2>
+
+                    <div className="space-y-2">
+
+                    <p>
+                        <span className="font-semibold">
+                        Người nhận:
+                        </span>{" "}
+                        {order.shippingAddress?.fullName}
+                    </p>
+
+                    <p>
+                        <span className="font-semibold">
+                        Số điện thoại:
+                        </span>{" "}
+                        {order.shippingAddress?.phone}
+                    </p>
+
+                    <p>
+                        <span className="font-semibold">
+                        Địa chỉ:
+                        </span>{" "}
+                        {order.shippingAddress?.address}
+                    </p>
+
+                    </div>
+
+                </div>
+
+                {/* PAYMENT */}
+                <div className="bg-white rounded-3xl p-8">
+
+                    <h2 className="text-2xl font-bold mb-6">
+                    Thanh toán
+                    </h2>
+
+                    <div className="space-y-4">
+
+                    <div className="flex justify-between">
+
+                        <span>Tạm tính</span>
+
+                        <span>
+                        {order.subtotal?.toLocaleString()}đ
+                        </span>
+
+                    </div>
+
+                    <div className="flex justify-between">
+
+                        <span>Phí vận chuyển</span>
+
+                        <span>
+                        {order.shippingFee?.toLocaleString()}đ
+                        </span>
+
+                    </div>
+
+                    <div className="border-t pt-4 flex justify-between">
+
+                        <span className="font-bold text-xl">
+                        Tổng cộng
+                        </span>
+
+                        <span className="font-bold text-3xl text-red-500">
+                        {order.totalPrice?.toLocaleString()}đ
+                        </span>
+
+                    </div>
+
+                    </div>
+
+                    {(order.status === "NEW" ||
+                    order.status === "PREPARING") && (
+
                     <button
-                        onClick={
-                            handleCancel
-                        }
+                        onClick={handleCancel}
+                        className="
+                        mt-8
+                        h-14
+                        px-8
+                        rounded-2xl
+                        bg-red-500
+                        hover:bg-red-600
+                        text-white
+                        font-semibold
+                        transition
+                        "
                     >
-                        Cancel
-                        Order
+                        Hủy đơn hàng
                     </button>
-                )}
+
+                    )}
+
+                </div>
+
+                </div>
+
             </div>
-        );
+            );
     };
 
 export default OrderDetail;

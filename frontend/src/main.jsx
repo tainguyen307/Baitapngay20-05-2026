@@ -10,12 +10,20 @@ import Home from "./pages/home";
 import Login from "./pages/login";
 import Register from "./pages/register";
 import User from "./pages/user";
+import Products from "./pages/products";
 import ProductDetail from "./pages/product-detail";
 
 import Cart from "./pages/cart";
 import Checkout from "./pages/checkout";
 import Orders from "./pages/orders";
 import OrderDetail from "./pages/order-detail";
+
+// admin pages
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminCategories from "./pages/admin/AdminCategories";
+import AdminProducts from "./pages/admin/AdminProducts";
+import AdminOrders from "./pages/admin/AdminOrders";
+import AdminUsers from "./pages/admin/AdminUsers";
 
 // auth context
 import { AuthWrapper } from "./components/context/auth.context";
@@ -24,6 +32,12 @@ import { AuthWrapper } from "./components/context/auth.context";
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("access_token");
   return token ? children : <Login />;
+};
+
+const AdminRoute = ({ children }) => {
+  const token = localStorage.getItem("access_token");
+  const userRole = localStorage.getItem("user_role");
+  return token && userRole === "admin" ? children : <Login />;
 };
 
 const router = createBrowserRouter([
@@ -39,7 +53,8 @@ const router = createBrowserRouter([
 
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
-
+      
+      { path: "products", element: <Products /> },
       { path: "products/:id", element: <ProductDetail /> },
 
       // protected routes
@@ -81,6 +96,48 @@ const router = createBrowserRouter([
           <ProtectedRoute>
             <OrderDetail />
           </ProtectedRoute>
+        ),
+      },
+
+      // admin routes
+      {
+        path: "admin",
+        element: (
+          <AdminRoute>
+            <AdminDashboard />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "admin/categories",
+        element: (
+          <AdminRoute>
+            <AdminCategories />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "admin/products",
+        element: (
+          <AdminRoute>
+            <AdminProducts />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "admin/orders",
+        element: (
+          <AdminRoute>
+            <AdminOrders />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "admin/users",
+        element: (
+          <AdminRoute>
+            <AdminUsers />
+          </AdminRoute>
         ),
       },
     ],

@@ -18,6 +18,8 @@ import {
 
 import "swiper/css";
 
+import { addToCartAPI } from "../util/api";
+
 const ProductDetailPage = () => {
 
     const { id } = useParams();
@@ -51,6 +53,21 @@ const ProductDetailPage = () => {
     }, [id]);
 
     if (!product) return null;
+
+    // Add to cart
+    const handleAddToCart = async () => {
+        try {
+            await addToCartAPI({
+            productId: product._id,
+            quantity,
+            });
+
+            alert("Đã thêm vào giỏ hàng");
+        } catch (error) {
+            console.error(error);
+            alert("Thêm vào giỏ hàng thất bại");
+        }
+        };
 
     return (
 
@@ -238,6 +255,7 @@ const ProductDetailPage = () => {
 
                         {/* BUTTON */}
                         <button
+                            onClick={handleAddToCart}
                             className="
                                 h-14
                                 px-8

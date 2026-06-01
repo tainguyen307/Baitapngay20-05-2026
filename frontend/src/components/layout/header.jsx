@@ -13,6 +13,10 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 
 import { AuthContext } from "../context/auth.context";
 
+import { fetchCategoriesApi } from "../../util/api";
+
+import { getCartAPI } from "../../util/api";
+
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -30,12 +34,14 @@ const Header = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
+    localStorage.removeItem("user_role");
 
     setAuth({
       isAuthenticated: false,
       user: {
         email: "",
         name: "",
+        role: "user",
       },
     });
 
@@ -46,30 +52,86 @@ const Header = () => {
   const handleSearch = (e) => {
     if (e.key === "Enter") {
       if (keyword.trim()) {
-        navigate(`/?search=${keyword}`);
+        navigate(`/products?search=${keyword}`);
       }
     }
   };
 
   /* PRODUCT MENU */
-  const productItems = [
-    {
-      key: "1",
-      label: <button className="w-full text-left">Vợt Pickleball</button>,
-    },
-    {
-      key: "2",
-      label: <button className="w-full text-left">Giày Pickleball</button>,
-    },
-    {
-      key: "3",
-      label: <button className="w-full text-left">Quần áo Pickleball</button>,
-    },
-  ];
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetchCategoriesApi();
+
+        setCategories(
+          res?.data?.data || res?.data || []
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const productItems = categories.map((item) => ({
+    key: item._id,
+    label: (
+      <Link to={`/products?category=${item._id}`}>
+        {item.name}
+      </Link>
+    ),
+  }));
+
+  // Fetch Cart quantity
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const res = await getCartAPI();
+
+        const items =
+          res?.data?.items || [];
+
+        const total =
+          items.reduce(
+            (sum, item) => sum + item.quantity,
+            0
+          );
+
+        setCartCount(total);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (auth.isAuthenticated) {
+      fetchCart();
+    }
+  }, [auth.isAuthenticated]);
 
   /* ACCOUNT MENU */
   const accountItems = auth.isAuthenticated
     ? [
+        ...(auth.user?.role === "admin"
+          ? [
+              {
+                key: "admin",
+                label: <Link to="/admin">Admin Panel</Link>,
+              },
+            ]
+          : []),
+        {
+          key: "user",
+          label: <Link to="/user">My Account</Link>,
+        },
+        {
+          key: "orders",
+          label: <Link to="/orders">My Orders</Link>,
+        },
         {
           key: "logout",
           label: (
@@ -136,7 +198,7 @@ const Header = () => {
 
             <button
               onClick={() =>
-                keyword.trim() && navigate(`/?search=${keyword}`)
+                keyword.trim() && navigate(`/products?search=${keyword}`)
               }
               className="
                 absolute right-3 top-1/2 -translate-y-1/2
@@ -183,11 +245,11 @@ const Header = () => {
         <div className="flex items-center gap-5">
 
           {/* CART */}
-          <button className="w-12 h-12 rounded-xl bg-gray-100 hover:bg-green-50 transition flex items-center justify-center">
-            <Badge count={2} size="small">
+          <Link to="/cart" className="w-12 h-12 rounded-xl bg-gray-100 hover:bg-green-50 transition flex items-center justify-center">
+            <Badge count={cartCount} size="small">
               <ShoppingCartOutlined className="text-xl text-gray-700" />
             </Badge>
-          </button>
+          </Link>
 
           {/* ACCOUNT */}
           <Dropdown menu={{ items: accountItems }} placement="bottomRight" arrow>

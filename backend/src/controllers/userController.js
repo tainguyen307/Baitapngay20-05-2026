@@ -1,4 +1,5 @@
 const { createUserService, loginService, getUserService } = require("../services/userService");
+const User = require("../models/user");
 
 const createUser = async (req, res) => {
     const { name, email, password } = req.body;
@@ -14,9 +15,35 @@ const handleLogin = async (req, res) => {
 }
 
 const getUser = async (req, res) => {
-    const data = await getUserService();
-    return res.status(200).json(data)
-}
+    try {
+        if (!req.user) {
+            return res.status(401).json({
+                EC: 1,
+                EM: "Unauthorized"
+            });
+        }
+
+        const user = await User.findOne({ email: req.user.email }).select("-password");
+
+        if (!user) {
+            return res.status(404).json({
+                EC: 1,
+                EM: "User not found"
+            });
+        }
+
+        return res.status(200).json({
+            EC: 0,
+            data: user
+        });
+
+    } catch (err) {
+        return res.status(500).json({
+            EC: 2,
+            EM: err.message
+        });
+    }
+};
 
 const getAccount = async (req, res) => {
     return res.status(200).json(req.user)

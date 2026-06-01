@@ -134,30 +134,31 @@ const addToCartAPI = (
 ) => {
 
     return axios.post(
-        "/v1/api/cart",
+        "/v1/api/cart/add",
         data
     );
 };
 
 const updateCartAPI = (
-    id,
+    product,
     quantity
 ) => {
 
     return axios.put(
-        `/v1/api/cart/${id}`,
+        `/v1/api/cart/update/`,
         {
+            product,
             quantity
         }
     );
 };
 
 const deleteCartAPI = (
-    id
+    product
 ) => {
 
     return axios.delete(
-        `/v1/api/cart/${id}`
+        `/v1/api/cart/${product}`
     );
 };
 
@@ -169,7 +170,7 @@ const createOrderAPI = (
     data
 ) => {
     return axios.post(
-        "/v1/api/orders",
+        "/v1/api/orders/checkout",
         data
     );
 };

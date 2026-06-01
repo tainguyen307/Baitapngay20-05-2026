@@ -16,6 +16,7 @@ const LoginPage = () => {
 
         if (res && res.EC === 0) {
             localStorage.setItem("access_token", res.access_token)
+            localStorage.setItem("user_role", res?.user?.role ?? "user")
             notification.success({
                 message: "LOGIN USER",
                 description: "Success"
@@ -24,7 +25,8 @@ const LoginPage = () => {
                 isAuthenticated: true,
                 user: {
                     email: res?.user?.email ?? "",
-                    name: res?.user?.name ?? ""
+                    name: res?.user?.name ?? "",
+                    role: res?.user?.role ?? "user"
                 }
             })
             navigate("/");

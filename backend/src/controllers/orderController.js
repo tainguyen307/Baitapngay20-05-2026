@@ -6,7 +6,7 @@ const createOrder =
     async (req, res) => {
         try {
             const userId =
-                req.user._id;
+                req.user.id;
 
             const order =
                 await orderService.createOrder(
@@ -35,7 +35,7 @@ const getMyOrders =
         try {
             const orders =
                 await orderService.getMyOrders(
-                    req.user._id
+                    req.user.id
                 );
 
             return res.json({
@@ -59,7 +59,7 @@ const getOrderDetail =
         try {
             const order =
                 await orderService.getOrderDetail(
-                    req.user._id,
+                    req.user.id,
                     req.params.id
                 );
 
@@ -84,7 +84,7 @@ const cancelOrder =
         try {
             const order =
                 await orderService.cancelOrder(
-                    req.user._id,
+                    req.user.id,
                     req.params.id
                 );
 

@@ -159,7 +159,7 @@ routerAPI.post(
 
 // MY ORDER HISTORY
 routerAPI.get(
-    "/orders/my-orders",
+    "/orders",
     getMyOrders
 );
 

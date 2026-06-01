@@ -54,8 +54,13 @@ function App() {
 
                 name:
                   res?.data?.name,
+                
+                role:
+                  res?.data?.role ?? "user",
               },
             });
+
+            localStorage.setItem("user_role", res?.data?.role ?? "user");
 
           } else {
 
