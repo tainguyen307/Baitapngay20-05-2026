@@ -1,4 +1,5 @@
 const express = require('express');
+const upload = require("../middleware/upload");
 
 const {
     createUser,
@@ -106,6 +107,7 @@ routerAPI.get(
 // CREATE PRODUCT
 routerAPI.post(
     "/products",
+    upload.array("images", 5),
     createProduct
 );
 

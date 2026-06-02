@@ -12,6 +12,7 @@ import {
 } from "@ant-design/icons";
 
 import { Link } from "react-router-dom";
+import { getImageUrl } from "../util/getImageUrl";
 
 const Cart = () => {
   const [items, setItems] = useState([]);
@@ -120,8 +121,7 @@ const Cart = () => {
 
                   <img
                     src={
-                      item.image ||
-                      "https://via.placeholder.com/200"
+                      getImageUrl(item.image)
                     }
                     alt=""
                     className="
@@ -139,8 +139,7 @@ const Cart = () => {
                     </h3>
 
                     <p className="text-red-500 text-2xl font-bold mt-2">
-                      $
-                      {item.price}
+                      {item.price}đ
                     </p>
 
                     <div className="flex items-center justify-between mt-6">
@@ -239,13 +238,13 @@ const Cart = () => {
                   <div className="flex justify-between">
                     <span>Tạm tính</span>
                     <span>
-                      ${subtotal}
+                      {subtotal}đ
                     </span>
                   </div>
 
                   <div className="flex justify-between">
                     <span>Phí vận chuyển</span>
-                    <span>$5</span>
+                    <span>5000đ</span>
                   </div>
 
                   <hr />
@@ -255,8 +254,7 @@ const Cart = () => {
                     <span>Tổng cộng</span>
 
                     <span className="text-green-600">
-                      $
-                      {subtotal + 5}
+                      {subtotal + 5000}đ
                     </span>
 
                   </div>
@@ -265,6 +263,7 @@ const Cart = () => {
 
                 <Link
                   to="/checkout"
+                  state={{ items }}
                   className="
                     mt-8
                     h-14

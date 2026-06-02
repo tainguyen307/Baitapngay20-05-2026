@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { createOrderAPI } from "../util/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Checkout = () => {
   const navigate = useNavigate();
+
+  const location = useLocation();
+  const items = location.state?.items || [];
 
   const [loading, setLoading] = useState(false);
 
@@ -12,6 +15,12 @@ const Checkout = () => {
     phone: "",
     address: "",
   });
+
+  const subtotal = items.reduce((sum, item) => {
+    const price = Number(item.price || 0);
+    const qty = Number(item.quantity || 0);
+    return sum + price * qty;
+  }, 0);
 
   const handleChange = (e) => {
     setForm({
@@ -170,12 +179,12 @@ const Checkout = () => {
 
               <div className="flex justify-between">
                 <span>Tạm tính</span>
-                <span>$0</span>
+                <span>{subtotal.toLocaleString()}đ</span>
               </div>
 
               <div className="flex justify-between">
                 <span>Phí vận chuyển</span>
-                <span>$5</span>
+                <span>5000đ</span>
               </div>
 
               <hr />
@@ -183,7 +192,7 @@ const Checkout = () => {
               <div className="flex justify-between text-xl font-bold">
                 <span>Tổng cộng</span>
                 <span className="text-red-500">
-                  $0
+                  {(subtotal + 5000).toLocaleString()}đ
                 </span>
               </div>
 

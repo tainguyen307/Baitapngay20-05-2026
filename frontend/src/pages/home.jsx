@@ -13,6 +13,8 @@ import {
   fetchCategoriesApi
 } from "../util/api";
 
+import { getImageUrl } from "../util/getImageUrl";
+
 import { Link } from "react-router-dom";
 
 import {
@@ -416,7 +418,7 @@ const HomePage = () => {
                 ">
 
                   <img
-                    src={item.image}
+                    src={getImageUrl(item.images?.[0])}
                     alt=""
                     className="
                       w-full
@@ -511,7 +513,7 @@ const HomePage = () => {
                 ">
 
                   <img
-                    src={item.image}
+                    src={getImageUrl(item.images?.[0])}
                     alt=""
                     className="
                       w-full
@@ -782,8 +784,7 @@ const HomePage = () => {
 
                   <img
                     src={
-                      item.images?.[0]
-                      || item.image
+                      getImageUrl(item.images?.[0])
                     }
                     alt={item.name}
                     className="

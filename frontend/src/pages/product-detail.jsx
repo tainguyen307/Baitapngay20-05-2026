@@ -19,6 +19,7 @@ import {
 import "swiper/css";
 
 import { addToCartAPI } from "../util/api";
+import { getImageUrl } from "../util/getImageUrl";
 
 const ProductDetailPage = () => {
 
@@ -106,7 +107,7 @@ const ProductDetailPage = () => {
                                 <SwiperSlide key={index}>
 
                                     <img
-                                        src={img}
+                                        src={getImageUrl(img)}
                                         alt=""
                                         className="
                                             w-full
@@ -324,7 +325,7 @@ const ProductDetailPage = () => {
                                 >
 
                                     <img
-                                        src={item.images[0]}
+                                        src={getImageUrl(item.images?.[0])}
                                         alt=""
                                         className="
                                             w-full

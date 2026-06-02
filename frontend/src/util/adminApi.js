@@ -44,12 +44,12 @@ const getAdminProductByIdApi = (id) => {
   return axios.get(`/v1/admin/products/${id}`);
 };
 
-const createAdminProductApi = (data) => {
-  return axios.post("/v1/admin/products", data);
+const createAdminProductApi = (formData) => {
+  return axios.post("/v1/admin/products", formData);
 };
 
-const updateAdminProductApi = (id, data) => {
-  return axios.put(`/v1/admin/products/${id}`, data);
+const updateAdminProductApi = (id, formData) => {
+  return axios.put(`/v1/admin/products/${id}`, formData);
 };
 
 const deleteAdminProductApi = (id) => {

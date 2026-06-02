@@ -2,10 +2,15 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import { fetchProductsApi } from "../util/api";
+import { getImageUrl } from "../util/getImageUrl";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [searchParams] = useSearchParams();
+
+  // 👉 ADD
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,16 +25,26 @@ const Products = () => {
       if (search) params.append("search", search);
       if (category) params.append("category", category);
 
+      // 👉 ADD PAGINATION
+      params.append("page", page);
+      params.append("limit", 12);
+
       const res = await fetchProductsApi(
         params.toString()
       );
 
-      setProducts(
-        res?.data?.products || []
-      );
+      const data = res?.data?.data || res?.data;
+
+      setProducts(data?.products || []);
+      setPagination(data?.pagination || {});
     };
 
     fetchData();
+  }, [searchParams, page]);
+
+  // reset page khi filter đổi
+  useEffect(() => {
+    setPage(1);
   }, [searchParams]);
 
   return (
@@ -40,46 +55,38 @@ const Products = () => {
           Sản phẩm
         </h1>
 
-        <div
-          className="
-            grid
-            grid-cols-1
-            sm:grid-cols-2
-            md:grid-cols-3
-            xl:grid-cols-4
-            gap-6
-          "
-        >
+        {/* PRODUCTS GRID */}
+        <div className="
+          grid
+          grid-cols-1
+          sm:grid-cols-2
+          md:grid-cols-3
+          xl:grid-cols-4
+          gap-6
+        ">
           {products.map((item) => (
             <Link
               key={item._id}
               to={`/products/${item._id}`}
             >
-              <div
-                className="
-                  bg-white
-                  rounded-2xl
-                  overflow-hidden
-                  border
-                  border-gray-200
-                  hover:shadow-xl
-                  hover:-translate-y-1
-                  transition-all
-                  duration-300
-                  group
-                "
-              >
+              <div className="
+                bg-white
+                rounded-2xl
+                overflow-hidden
+                border
+                border-gray-200
+                hover:shadow-xl
+                hover:-translate-y-1
+                transition-all
+                duration-300
+                group
+              ">
+
                 <img
                   src={
-                    item.images?.[0] ||
-                    "https://via.placeholder.com/400x300"
+                    getImageUrl(item.images?.[0])
                   }
-                  alt={item.name}
-                  className="
-                    w-full
-                    h-60
-                    object-cover
-                  "
+                  className="w-full h-60 object-cover"
                 />
 
                 <div className="p-5">
@@ -100,25 +107,67 @@ const Products = () => {
                       {item.price.toLocaleString()}đ
                     </h4>
 
-                    <button
-                      className="
-                        w-11 h-11
-                        rounded-xl
-                        bg-green-600
-                        text-white
-                        flex
-                        items-center
-                        justify-center
-                      "
-                    >
+                    <button className="
+                      w-11 h-11
+                      rounded-xl
+                      bg-green-600
+                      text-white
+                      flex
+                      items-center
+                      justify-center
+                    ">
                       <ShoppingCartOutlined />
                     </button>
                   </div>
                 </div>
+
               </div>
             </Link>
           ))}
         </div>
+
+        {/* ================= PAGINATION UI ================= */}
+        {pagination.totalPages > 1 && (
+          <div className="flex justify-center items-center gap-2 mt-10">
+
+            {/* Prev */}
+            <button
+              disabled={page <= 1}
+              onClick={() => setPage(prev => prev - 1)}
+              className="px-4 py-2 border rounded disabled:opacity-50"
+            >
+              ← Trước
+            </button>
+
+            {/* Pages */}
+            {Array.from(
+              { length: pagination.totalPages || 1 },
+              (_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setPage(i + 1)}
+                  className={`px-4 py-2 border rounded ${
+                    page === i + 1
+                      ? "bg-green-600 text-white"
+                      : ""
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              )
+            )}
+
+            {/* Next */}
+            <button
+              disabled={page >= pagination.totalPages}
+              onClick={() => setPage(prev => prev + 1)}
+              className="px-4 py-2 border rounded disabled:opacity-50"
+            >
+              Sau →
+            </button>
+
+          </div>
+        )}
 
       </section>
     </div>

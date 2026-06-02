@@ -128,31 +128,30 @@ const getProducts = async (req, res) => {
 };
 
 const createProduct = async (req, res) => {
+  try {
+    console.log("BODY:", req.body);
+    console.log("FILES:", req.files);
+    const images = req.files?.length
+      ? req.files.map(file => `/uploads/${file.filename}`)
+      : [];
 
-    try {
+    const product = await Product.create({
+      ...req.body,
+      images, // 👈 QUAN TRỌNG
+    });
 
-        const product =
-            await Product.create(req.body);
+    return res.status(201).json({
+      EC: 0,
+      message: "Create product success",
+      data: product,
+    });
 
-        return res.status(201).json({
-
-            EC: 0,
-
-            message:
-                'Create product success',
-
-            data: product,
-        });
-
-    } catch (error) {
-
-        return res.status(500).json({
-
-            EC: 1,
-
-            message: error.message,
-        });
-    }
+  } catch (error) {
+    return res.status(500).json({
+      EC: 1,
+      message: error.message,
+    });
+  }
 };
 
 const getProductDetail = async (

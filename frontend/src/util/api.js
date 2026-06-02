@@ -64,12 +64,12 @@ const fetchProductDetailApi = (
 };
 
 const createProductApi = (
-    data
+    formData
 ) => {
 
     return axios.post(
         "/v1/api/products",
-        data
+        formData
     );
 };
 

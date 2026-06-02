@@ -18,6 +18,7 @@ const AdminProducts = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [form] = Form.useForm();
+  const [images, setImages] = useState([]);
 
   const fetchData = async () => {
     try {
@@ -90,21 +91,33 @@ const AdminProducts = () => {
 
   const handleSubmit = async (values) => {
     try {
+      const formData = new FormData();
+
+      formData.append("name", values.name);
+      formData.append("price", values.price);
+      formData.append("description", values.description);
+      formData.append("stock", values.stock);
+      formData.append("sold", values.sold || 0);
+      formData.append("category", values.category);
+
+      // images upload
+      images.forEach((file) => {
+        formData.append("images", file);
+      });
+
       if (editingId) {
-        await updateAdminProductApi(editingId, values);
-        setProducts(
-          products.map((p) => (p._id === editingId ? { ...p, ...values } : p))
-        );
-        alert('Product updated successfully');
+        await updateAdminProductApi(editingId, formData);
       } else {
-        const res = await createAdminProductApi(values);
-        if (res && res.data && res.data.success) {
-          setProducts([...products, res.data.data]);
-          alert('Product created successfully');
-        }
+        await createAdminProductApi(formData);
       }
+
+      alert("Success");
+
       setIsModalVisible(false);
       form.resetFields();
+      setImages([]);
+
+      fetchData();
     } catch (err) {
       setError(err.message);
     }
@@ -245,6 +258,15 @@ const AdminProducts = () => {
                 </Select.Option>
               ))}
             </Select>
+          </Form.Item>
+          <Form.Item label="Images">
+            <input
+              type="file"
+              multiple
+              onChange={(e) =>
+                setImages([...e.target.files])
+              }
+            />
           </Form.Item>
         </Form>
       </Modal>

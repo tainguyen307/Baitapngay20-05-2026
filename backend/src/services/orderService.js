@@ -40,7 +40,8 @@ const createOrder = async (
             item.product,
             {
                 $inc: {
-                    stock: -item.quantity
+                    stock: -item.quantity,
+                    sold: item.quantity
                 }
             }
         );

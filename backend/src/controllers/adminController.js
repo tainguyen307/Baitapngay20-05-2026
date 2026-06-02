@@ -150,7 +150,7 @@ const getProductById = async (req, res) => {
 
 const createProduct = async (req, res) => {
   try {
-    const { name, price, description, stock, category, images } = req.body;
+    const { name, price, description, stock, category } = req.body;
 
     if (!name || !price || !stock || !category) {
       return res.status(400).json({
@@ -158,6 +158,8 @@ const createProduct = async (req, res) => {
         message: 'Name, price, stock, and category are required',
       });
     }
+
+    const images = req.files?.map(file => `/uploads/${file.filename}`) || [];
 
     const product = await Product.create({
       name,
@@ -182,19 +184,29 @@ const createProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   try {
-    const { name, price, description, stock, category, images, sold } = req.body;
+    const { name, price, description, stock, category, sold } = req.body;
+
+    // lấy file upload
+    const newImages =
+      req.files?.map(file => `/uploads/${file.filename}`) || [];
+
+    const updateData = {
+      name,
+      price,
+      description,
+      stock,
+      category,
+      sold,
+    };
+
+    // chỉ update images nếu có upload mới
+    if (newImages.length > 0) {
+      updateData.images = newImages;
+    }
 
     const product = await Product.findByIdAndUpdate(
       req.params.id,
-      {
-        name,
-        price,
-        description,
-        stock,
-        category,
-        images: images || [],
-        sold,
-      },
+      updateData,
       { new: true }
     ).populate('category');
 
@@ -209,6 +221,7 @@ const updateProduct = async (req, res) => {
       success: true,
       data: product,
     });
+
   } catch (error) {
     return res.status(500).json({
       success: false,

@@ -1,5 +1,6 @@
 const express = require('express');
 const auth = require('../middleware/auth');
+const upload = require("../middleware/upload");
 const checkAdminRole = require('../middleware/adminAuth');
 const {
   // Categories
@@ -45,8 +46,8 @@ routerAdmin.delete('/categories/:id', deleteCategory);
 // ================= PRODUCTS =================
 routerAdmin.get('/products', getAllProducts);
 routerAdmin.get('/products/:id', getProductById);
-routerAdmin.post('/products', createProduct);
-routerAdmin.put('/products/:id', updateProduct);
+routerAdmin.post('/products', upload.array("images", 5), createProduct);
+routerAdmin.put('/products/:id', upload.array("images", 5), updateProduct);
 routerAdmin.delete('/products/:id', deleteProduct);
 
 // ================= ORDERS =================
